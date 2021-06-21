@@ -1,7 +1,5 @@
 import { transparentize } from 'polished'
-import React, { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
-
+import React from 'react'
 import { AlertTriangle } from 'react-feather'
 import styled, { css } from 'styled-components'
 import { Text } from 'rebass'
@@ -9,22 +7,11 @@ import { AutoColumn } from '../Column'
 
 export const Wrapper = styled.div`
   position: relative;
-  padding: 8px;
 `
 
 export const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  padding: 4px;
-  border-radius: 12px;
-  height: 32px;
-  width: 32px;
-  position: relative;
-  margin-top: -14px;
-  margin-bottom: -14px;
-  left: calc(50% - 16px);
-  /* transform: rotate(90deg); */
-  background-color: ${({ theme }) => theme.bg1};
-  border: 4px solid ${({ theme }) => theme.bg0};
-  z-index: 2;
+  padding: 2px;
+
   ${({ clickable }) =>
     clickable
       ? css`
@@ -43,8 +30,7 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div`
-  margin-top: ;
-  /* background-color: ${({ theme }) => theme.bg1}; */
+  margin-top: 1rem;
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
@@ -55,63 +41,39 @@ export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
       ? theme.yellow2
       : severity === 1
       ? theme.text1
-      : theme.text2};
-`
-
-export const ErrorPill = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
-  border-radius: 8px;
-
-  color: ${({ theme, severity }) =>
-    severity === 3 || severity === 4
-      ? theme.red1
-      : severity === 2
-      ? theme.yellow2
-      : severity === 1
-      ? theme.text1
-      : theme.text3};
-
-  /* background-color: ${({ theme, severity }) =>
-    severity === 3 || severity === 4
-      ? transparentize(0.9, theme.red1)
-      : severity === 2
-      ? transparentize(0.9, theme.yellow2)
-      : severity === 1
-      ? transparentize(0.9, theme.text1)
-      : transparentize(0.9, theme.green1)}; */
+      : theme.green1};
 `
 
 export const StyledBalanceMaxMini = styled.button`
-  /* height: 22px; */
-  width: fit-content;
-  background-color: ${({ theme }) => theme.bg1};
+  height: 22px;
+  width: 22px;
+  background-color: ${({ theme }) => theme.bg2};
   border: none;
-  border-radius: 8px;
-  padding: 0;
+  border-radius: 50%;
+  padding: 0.2rem;
   font-size: 0.875rem;
   font-weight: 400;
-  opacity: 0.6;
-  margin-right: 0.5rem;
+  margin-left: 0.4rem;
   cursor: pointer;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text2};
   display: flex;
   justify-content: center;
   align-items: center;
   float: right;
 
   :hover {
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => theme.bg3};
   }
   :focus {
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => theme.bg3};
     outline: none;
   }
 `
 
 export const TruncatedText = styled(Text)`
   text-overflow: ellipsis;
-  max-width: 220px;
+  width: 220px;
   overflow: hidden;
-  text-align: right;
 `
 
 // styles
@@ -165,37 +127,21 @@ const SwapCallbackErrorInnerAlertTriangle = styled.div`
   height: 48px;
 `
 
-export function SwapCallbackError({ error }: { error: ReactNode }) {
+export function SwapCallbackError({ error }: { error: string }) {
   return (
     <SwapCallbackErrorInner>
       <SwapCallbackErrorInnerAlertTriangle>
         <AlertTriangle size={24} />
       </SwapCallbackErrorInnerAlertTriangle>
-      <p style={{ wordBreak: 'break-word' }}>{error}</p>
+      <p>{error}</p>
     </SwapCallbackErrorInner>
   )
 }
 
 export const SwapShowAcceptChanges = styled(AutoColumn)`
-  background-color: ${({ theme }) => transparentize(0.95, theme.primary3)};
-  color: ${({ theme }) => theme.primaryText1};
+  background-color: ${({ theme }) => transparentize(0.9, theme.primary1)};
+  color: ${({ theme }) => theme.primary1};
   padding: 0.5rem;
   border-radius: 12px;
   margin-top: 8px;
-`
-export const Separator = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${({ theme }) => theme.bg2};
-`
-
-export const V2TradeAlertWrapper = styled(Link)`
-  background-color: ${({ theme }) => theme.bg2};
-  display: flex;
-  align-items: center;
-  border-radius: 12px;
-  height: 22px;
-  margin-right: 0.5rem;
-  padding: 0 0.25rem 0 0.5rem;
-  text-decoration: none !important;
 `

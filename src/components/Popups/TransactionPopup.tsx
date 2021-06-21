@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import { AlertCircle, CheckCircle } from 'react-feather'
 import styled, { ThemeContext } from 'styled-components'
-import { useActiveWeb3React } from '../../hooks/web3'
+import { useActiveWeb3React } from '../../hooks'
 import { TYPE } from '../../theme'
 import { ExternalLink } from '../../theme/components'
-import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
+import { getEtherscanLink } from '../../utils'
 import { AutoColumn } from '../Column'
 import { AutoRow } from '../Row'
 
@@ -15,7 +15,7 @@ const RowNoFlex = styled(AutoRow)`
 export default function TransactionPopup({
   hash,
   success,
-  summary,
+  summary
 }: {
   hash: string
   success?: boolean
@@ -33,9 +33,7 @@ export default function TransactionPopup({
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>{summary ?? 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}</TYPE.body>
         {chainId && (
-          <ExternalLink href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
-            View on Explorer
-          </ExternalLink>
+          <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>View on Etherscan</ExternalLink>
         )}
       </AutoColumn>
     </RowNoFlex>

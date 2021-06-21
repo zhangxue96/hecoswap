@@ -1,19 +1,12 @@
 import React from 'react'
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { darken } from 'polished'
-import { Trans } from '@lingui/macro'
-import { NavLink, Link as HistoryLink, useLocation } from 'react-router-dom'
-import { Percent } from '@uniswap/sdk-core'
+import { useTranslation } from 'react-i18next'
+import { NavLink, Link as HistoryLink } from 'react-router-dom'
 
 import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
-import SettingsTab from '../Settings'
-
-import { useAppDispatch } from 'state/hooks'
-import { resetMintState } from 'state/mint/actions'
-import { resetMintState as resetMintV3State } from 'state/mint/v3/actions'
-import { TYPE } from 'theme'
-import useTheme from 'hooks/useTheme'
+import QuestionHelper from '../QuestionHelper'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -25,7 +18,7 @@ const Tabs = styled.div`
 const activeClassName = 'ACTIVE'
 
 const StyledNavLink = styled(NavLink).attrs({
-  activeClassName,
+  activeClassName
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
@@ -60,79 +53,48 @@ const StyledArrowLeft = styled(ArrowLeft)`
 `
 
 export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
+  const { t } = useTranslation()
   return (
-    <Tabs style={{ marginBottom: '20px', display: 'none', padding: '1rem 1rem 0 1rem' }}>
+    <Tabs style={{ marginBottom: '20px' }}>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
-        <Trans>Swap</Trans>
+        {t('swap')}
       </StyledNavLink>
       <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
-        <Trans>Pool</Trans>
+        {t('pool')}
       </StyledNavLink>
     </Tabs>
   )
 }
 
-export function FindPoolTabs({ origin }: { origin: string }) {
+export function FindPoolTabs() {
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
-        <HistoryLink to={origin}>
+      <RowBetween style={{ padding: '1rem' }}>
+        <HistoryLink to="/pool">
           <StyledArrowLeft />
         </HistoryLink>
-        <ActiveText>
-          <Trans>Import V2 Pool</Trans>
-        </ActiveText>
+        <ActiveText>Import Pool</ActiveText>
+        <QuestionHelper text={"Use this tool to find pairs that don't automatically appear in the interface."} />
       </RowBetween>
     </Tabs>
   )
 }
 
-export function AddRemoveTabs({
-  adding,
-  creating,
-  defaultSlippage,
-  positionID,
-}: {
-  adding: boolean
-  creating: boolean
-  defaultSlippage: Percent
-  positionID?: string | undefined
-}) {
-  const theme = useTheme()
-  // reset states on back
-  const dispatch = useAppDispatch()
-  const location = useLocation()
-
-  // detect if back should redirect to v3 or v2 pool page
-  const poolLink = location.pathname.includes('add/v2')
-    ? '/pool/v2'
-    : '/pool' + (!!positionID ? `/${positionID.toString()}` : '')
-
+export function AddRemoveTabs({ adding }: { adding: boolean }) {
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
-        <HistoryLink
-          to={poolLink}
-          onClick={() => {
-            if (adding) {
-              // not 100% sure both of these are needed
-              dispatch(resetMintState())
-              dispatch(resetMintV3State())
-            }
-          }}
-        >
-          <StyledArrowLeft stroke={theme.text2} />
+      <RowBetween style={{ padding: '1rem' }}>
+        <HistoryLink to="/pool">
+          <StyledArrowLeft />
         </HistoryLink>
-        <TYPE.mediumHeader fontWeight={500} fontSize={20}>
-          {creating ? (
-            <Trans>Create a pair</Trans>
-          ) : adding ? (
-            <Trans>Add Liquidity</Trans>
-          ) : (
-            <Trans>Remove Liquidity</Trans>
-          )}
-        </TYPE.mediumHeader>
-        <SettingsTab placeholderSlippage={defaultSlippage} />
+        <ActiveText>{adding ? 'Add' : 'Remove'} Liquidity</ActiveText>
+        <QuestionHelper
+          text={
+            adding
+              ? 'When you add liquidity, you are given pool tokens representing your position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.'
+              : 'Removing pool tokens converts your position back into underlying tokens at the current rate, proportional to your share of the pool. Accrued fees are included in the amounts you receive.'
+          }
+        />
       </RowBetween>
     </Tabs>
   )

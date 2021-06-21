@@ -1,21 +1,11 @@
 import React, { useRef } from 'react'
-import { BookOpen, Code, Info, MessageCircle, PieChart } from 'react-feather'
-import { Link } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import { Info, BookOpen, Code, PieChart, MessageCircle } from 'react-feather'
+import styled from 'styled-components'
 import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
-import { useActiveWeb3React } from '../../hooks/web3'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
-import { ApplicationModal } from '../../state/application/actions'
-import { useModalOpen, useToggleModal } from '../../state/application/hooks'
-import { Trans } from '@lingui/macro'
+import useToggle from '../../hooks/useToggle'
 
 import { ExternalLink } from '../../theme'
-import { ButtonPrimary } from '../Button'
-
-export enum FlyoutAlignment {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-}
 
 const StyledMenuIcon = styled(MenuIcon)`
   path {
@@ -31,7 +21,7 @@ const StyledMenuButton = styled.button`
   margin: 0;
   padding: 0;
   height: 35px;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg3};
 
   padding: 0.15rem 0.5rem;
   border-radius: 0.5rem;
@@ -40,18 +30,12 @@ const StyledMenuButton = styled.button`
   :focus {
     cursor: pointer;
     outline: none;
-    background-color: ${({ theme }) => theme.bg3};
+    background-color: ${({ theme }) => theme.bg4};
   }
 
   svg {
     margin-top: 2px;
   }
-`
-
-const UNIbutton = styled(ButtonPrimary)`
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
-  border: none;
 `
 
 const StyledMenu = styled.div`
@@ -64,50 +48,23 @@ const StyledMenu = styled.div`
   text-align: left;
 `
 
-const MenuFlyout = styled.span<{ flyoutAlignment?: FlyoutAlignment }>`
+const MenuFlyout = styled.span`
   min-width: 8.125rem;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg3};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 12px;
+  border-radius: 0.5rem;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
   position: absolute;
   top: 3rem;
+  right: 0rem;
   z-index: 100;
-  ${({ flyoutAlignment = FlyoutAlignment.RIGHT }) =>
-    flyoutAlignment === FlyoutAlignment.RIGHT
-      ? css`
-          right: 0rem;
-        `
-      : css`
-          left: 0rem;
-        `};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    top: -17.25rem;
-  `};
 `
 
 const MenuItem = styled(ExternalLink)`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  align-items: center;
-  padding: 0.5rem 0.5rem;
-  color: ${({ theme }) => theme.text2};
-  :hover {
-    color: ${({ theme }) => theme.text1};
-    cursor: pointer;
-    text-decoration: none;
-  }
-  > svg {
-    margin-right: 8px;
-  }
-`
-
-const InternalMenuItem = styled(Link)`
   flex: 1;
   padding: 0.5rem 0.5rem;
   color: ${({ theme }) => theme.text2};
@@ -124,13 +81,10 @@ const InternalMenuItem = styled(Link)`
 const CODE_LINK = 'https://github.com/Uniswap/uniswap-interface'
 
 export default function Menu() {
-  const { account } = useActiveWeb3React()
-
   const node = useRef<HTMLDivElement>()
-  const open = useModalOpen(ApplicationModal.MENU)
-  const toggle = useToggleModal(ApplicationModal.MENU)
+  const [open, toggle] = useToggle(false)
+
   useOnClickOutside(node, open ? toggle : undefined)
-  const openClaimModal = useToggleModal(ApplicationModal.ADDRESS_CLAIM)
 
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
@@ -138,96 +92,29 @@ export default function Menu() {
       <StyledMenuButton onClick={toggle}>
         <StyledMenuIcon />
       </StyledMenuButton>
-
       {open && (
         <MenuFlyout>
-          <MenuItem href="https://uniswap.org/">
+          <MenuItem id="link" href="https://uniswap.org/">
             <Info size={14} />
-            <div>
-              <Trans>About</Trans>
-            </div>
+            About
           </MenuItem>
-          <MenuItem href="https://docs.uniswap.org/">
+          <MenuItem id="link" href="https://uniswap.org/docs/v2">
             <BookOpen size={14} />
-            <div>
-              <Trans>Docs</Trans>
-            </div>
+            Docs
           </MenuItem>
-          <MenuItem href={CODE_LINK}>
+          <MenuItem id="link" href={CODE_LINK}>
             <Code size={14} />
-            <div>
-              <Trans>Code</Trans>
-            </div>
+            Code
           </MenuItem>
-          <MenuItem href="https://discord.gg/FCfyBSbCU5">
+          <MenuItem id="link" href="https://discord.gg/EwFs3Pp">
             <MessageCircle size={14} />
-            <div>
-              <Trans>Discord</Trans>
-            </div>
+            Discord
           </MenuItem>
-          <MenuItem href="https://info.uniswap.org/">
+          <MenuItem id="link" href="https://uniswap.info/">
             <PieChart size={14} />
-            <div>
-              <Trans>Analytics</Trans>
-            </div>
+            Analytics
           </MenuItem>
-          {account && (
-            <UNIbutton onClick={openClaimModal} padding="8px 16px" width="100%" borderRadius="12px" mt="0.5rem">
-              <Trans>Claim UNI</Trans>
-            </UNIbutton>
-          )}
         </MenuFlyout>
-      )}
-    </StyledMenu>
-  )
-}
-
-interface NewMenuProps {
-  flyoutAlignment?: FlyoutAlignment
-  ToggleUI?: React.FunctionComponent
-  menuItems: {
-    content: any
-    link: string
-    external: boolean
-  }[]
-}
-
-const NewMenuFlyout = styled(MenuFlyout)`
-  top: 3rem !important;
-`
-const NewMenuItem = styled(InternalMenuItem)`
-  width: max-content;
-  text-decoration: none;
-`
-
-const ExternalMenuItem = styled(MenuItem)`
-  width: max-content;
-  text-decoration: none;
-`
-
-export const NewMenu = ({ flyoutAlignment = FlyoutAlignment.RIGHT, ToggleUI, menuItems, ...rest }: NewMenuProps) => {
-  const node = useRef<HTMLDivElement>()
-  const open = useModalOpen(ApplicationModal.POOL_OVERVIEW_OPTIONS)
-  const toggle = useToggleModal(ApplicationModal.POOL_OVERVIEW_OPTIONS)
-  useOnClickOutside(node, open ? toggle : undefined)
-  const ToggleElement = ToggleUI || StyledMenuIcon
-  return (
-    <StyledMenu ref={node as any} {...rest}>
-      <ToggleElement onClick={toggle} />
-      {open && (
-        <NewMenuFlyout flyoutAlignment={flyoutAlignment}>
-          {menuItems.map(({ content, link, external }, i) =>
-            external ? (
-              <ExternalMenuItem id="link" href={link} key={link + i}>
-                {content}
-              </ExternalMenuItem>
-            ) : (
-              <NewMenuItem id="link" to={link} key={link + i}>
-                {content}
-              </NewMenuItem>
-            )
-          )}
-        </NewMenuFlyout>
       )}
     </StyledMenu>
   )

@@ -1,23 +1,23 @@
-import { Currency, Percent, Price } from '@uniswap/sdk-core'
+import { Currency, Percent, Price } from '@uniswap/sdk'
 import React, { useContext } from 'react'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { AutoColumn } from '../../components/Column'
 import { AutoRow } from '../../components/Row'
-import { ONE_BIPS } from '../../constants/misc'
-import { Field } from '../../state/mint/v3/actions'
+import { ONE_BIPS } from '../../constants'
+import { Field } from '../../state/mint/actions'
 import { TYPE } from '../../theme'
 
 export function PoolPriceBar({
   currencies,
   noLiquidity,
   poolTokenPercentage,
-  price,
+  price
 }: {
   currencies: { [field in Field]?: Currency }
   noLiquidity?: boolean
   poolTokenPercentage?: Percent
-  price?: Price<Currency, Currency>
+  price?: Price
 }) {
   const theme = useContext(ThemeContext)
   return (

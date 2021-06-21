@@ -1,45 +1,51 @@
-import React, { useContext } from 'react'
-import styled from 'styled-components/macro'
+import React from 'react'
+import styled from 'styled-components'
+import { RowBetween } from '../Row'
 import { AutoColumn } from '../Column'
-import { ThemeContext } from 'styled-components'
-import { TYPE } from '../../theme'
+import { transparentize } from 'polished'
 
 const Wrapper = styled(AutoColumn)`
-  margin-right: 8px;
-  height: 100%;
+  margin-top: 1.25rem;
 `
 
-const Grouping = styled(AutoColumn)`
-  width: fit-content;
-  padding: 4px;
-  /* background-color: ${({ theme }) => theme.bg2}; */
-  border-radius: 16px;
+const Grouping = styled(RowBetween)`
+  width: 50%;
 `
 
 const Circle = styled.div<{ confirmed?: boolean; disabled?: boolean }>`
-  width: 48px;
-  height: 48px;
+  min-width: 20px;
+  min-height: 20px;
   background-color: ${({ theme, confirmed, disabled }) =>
-    disabled ? theme.bg3 : confirmed ? theme.green1 : theme.primary1};
+    disabled ? theme.bg4 : confirmed ? theme.green1 : theme.primary1};
   border-radius: 50%;
-  color: ${({ theme, disabled }) => (disabled ? theme.text3 : theme.text1)};
+  color: ${({ theme }) => theme.white};
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 8px;
-  font-size: 16px;
-  padding: 1rem;
+  font-size: 12px;
 `
 
 const CircleRow = styled.div`
+  width: calc(100% - 20px);
   display: flex;
-  flex-direction: column;
   align-items: center;
+`
+
+const Connector = styled.div<{ prevConfirmed?: boolean }>`
+  width: 100%;
+  height: 2px;
+  background-color: ;
+  background: linear-gradient(
+    90deg,
+    ${({ theme, prevConfirmed }) => transparentize(0.5, prevConfirmed ? theme.green1 : theme.primary1)} 0%,
+    ${({ theme, prevConfirmed }) => (prevConfirmed ? theme.primary1 : theme.bg4)} 80%
+  );
+  opacity: 0.6;
 `
 
 interface ProgressCirclesProps {
   steps: boolean[]
-  disabled?: boolean
 }
 
 /**
@@ -52,23 +58,21 @@ interface ProgressCirclesProps {
  *
  * @param steps  array of booleans where true means step is complete
  */
-export default function ProgressCircles({ steps, disabled = false, ...rest }: ProgressCirclesProps) {
-  const theme = useContext(ThemeContext)
-
+export default function ProgressCircles({ steps }: ProgressCirclesProps) {
   return (
-    <Wrapper justify={'center'} {...rest}>
+    <Wrapper justify={'center'}>
       <Grouping>
         {steps.map((step, i) => {
           return (
             <CircleRow key={i}>
-              <Circle confirmed={step} disabled={disabled || (!steps[i - 1] && i !== 0)}>
-                {step ? '✓' : i + 1 + '.'}
+              <Circle confirmed={step} disabled={!steps[i - 1] && i !== 0}>
+                {step ? '✓' : i + 1}
               </Circle>
-              <TYPE.main color={theme.text4}>|</TYPE.main>
+              <Connector prevConfirmed={step} />
             </CircleRow>
           )
         })}
-        <Circle disabled={disabled || !steps[steps.length - 1]}>{steps.length + 1 + '.'}</Circle>
+        <Circle disabled={!steps[steps.length - 1]}>{steps.length + 1}</Circle>
       </Grouping>
     </Wrapper>
   )
